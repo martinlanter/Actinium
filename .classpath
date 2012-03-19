@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="lib" path="lib/js-14.jar" sourcepath="C:/Users/Javimka/ETHZ/_Bachelor Arbeit/rhino1_7R3/src"/>
+	<classpathentry exported="true" kind="lib" path="lib/Californium.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/E4XUtils.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

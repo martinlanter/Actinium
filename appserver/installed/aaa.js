@@ -1,0 +1,1 @@
+app.root.onget = function(request) { request.respond(69,"Hello World"); }
