@@ -1,0 +1,180 @@
+Übersicht
+1. App Server starten
+2. Intallieren einer neuen App
+3. Instanzierung einer installierten App
+4. Kommunizieren mit einer App
+5. Konfigurieren einer App
+6. Vorinstallierte Apps
+7. SimpleAppServer
+8. JavaScript programmieren
+
+
+1. App Server starten
+	Archiv entpacken.
+	Am besten mit Eclipse öffnen und ch.ethz.inf.vs.appserver.AppServer ausführen
+	
+	Konsolen Befehl wäre
+	und im Ordner "AppServer" folgendes ausführen
+	C:\...\AppServer> java -cp bin/;lib/js-14.jar;lib/Californium.jar;lib/E4XUtils.jar ch.ethz.inf.vs.appserver.AppServer
+
+
+2. Installieren einer neuen App:
+	Sende ein POST mit JavaScript Code an /install?[appname]
+	wobei [appname] = gewünschter name
+	
+	Z.B.
+	Request: (POST)
+		URI: coap://localhost:5683/install?appname
+		Payload: app.root.onget = function(request) { request.respond(69,"Hello World"); }
+	
+	Response: Application appname successfully installed to /install/appname
+	
+	Die app liegt nun im Ordner AppServer\appserver\installed\ als File appname.js.
+	Ausserdem wird die Ressource /install/appname erstellt. Von dieser App
+	kann jetzt eine Instanz erstellt werden, die dann läuft.
+
+
+3. Instanzierung einer installierten App
+	Sende POST mit "name=myname" an /install/appname
+
+	Z.B.
+	Zuerst eine Discovery durchführen, dann
+	Request: (POST)
+		URI: coap://localhost:5683/install/appname
+		Payload: name = myname
+	
+	Response: Application myname successfully installed to /apps/running/myname
+		
+	Nun wird ein Config File config_myname.cfg für diese App Instanz unter 
+	AppServer\appserver\apps erstellt. Desweiteren wird eine Ressource
+	apps/appconfigs/myname erstellt, welche das Config File der App repräsentiert.
+	
+	Ausserdem wird eine Ressource apps/running/myapp erstellt. Dies
+	ist die eigentliche App Ressource. 
+	
+		
+4. Kommunizieren mit einer installierten App
+	Sende ein GET, POST, PUT oder DELETE an die App.
+
+	Request: (GET)
+		URI: coap://localhost:5683/apps/running/myname
+		Payload: irgendwas
+
+	Response: Hello World
+	
+
+5. Konfigurieren einer App
+	Einige Eigenschaften einer App können im Nachhinein geändert werden, 
+	andere nicht (z.B. der Name). Die änderungen werden in der Form
+	"key = value" mit einem POST an die Config Resource geschickt.
+	Wichtig: POST ändert die Eigenschaften, die im Payload mitgegeben werden
+	         PUT hingegen ersetzt die vorhandenen Eigenschaften mit den
+	         Eigenschaften aus dem Payload (d.h. die anderen Eigenschaften
+	         werden gelöscht)
+	
+	Mit "start", "stop" und "restart" im payload, können Apps gestarten,
+	gestoppt und neu gestartet werden.
+	
+	Z.B.
+		URI: coap://localhost:5683/apps/appconfigs/myname
+		
+		a) Request: (GET)
+		   Payload: 
+		   Response: Alle Eigenschaften der App
+		   
+		b) Request: (POST)
+		   Payload: enable_request_delivery = false
+		   Response: successfully changed keys: [enable_request_delivery]
+		   ==> App myname kann nun keine Requests mehr empfangen
+		   
+		c) Request: (POST)
+		   Payload: restart
+		   Response: put running = restart
+		   ==> App myname startet neu
+
+
+6. Vorinstallierte Apps
+Folgende JavaScript Apps sind zur Zeit installiert. 
+Jede App testet eine bestimmte Funktionalität und dient als Beispiel für
+eigene Apps.
+
+- postcounter
+	Diese App zählt einfach die POST Request. Ein PUT Request setzt den Zähler
+	zurück. GET und DELETE sind nicht implementiert.
+
+- storage
+	Diese App erstellt bei jedem POST Request (unabhängig vom Payload) eine neue
+	Kinder-Ressource. Die erstellen Kinder Ressourcen verhalten sich genauso.
+	(Ist ein alter Test, um das erstellen neuer Ressourcen on-the-fly zu testen)
+
+- datetime
+	Diese App zeigt das Datum und die Zeit aus veschiedenen Zeitzonen an. Pro
+	Zeitzone existiert eine Ressource, die wiederum jeweils eine Ressource für
+	das Datum und eine für die Zeit enthält.
+	
+- timer
+	Diese App implementiert einen Timer. Bei einem POST Request wird eine neue
+	Timer Ressource mit dem im Payload liegenden String als Name erstellt. Bei
+	einem PUT Request auf diese Timer Ressource wird die Periode des Timers
+	gemäss Payload geändert (z.b. Paylod "2000" um eine Periode von 2000 ms
+	zu erhalten). Nach ablauf einer Periode wird jeweils changed() aufgerufen,
+	welches alle observenden Ressourcen notifiziert. Die App currencyobs
+	verwendet einen solchen Timer.
+	
+- curobs (currencyobs.ja)
+	Diese App erstellt einen neuen Timer (via CoAP Kommunikation) und registriert
+	sich als Observer. Alle 2 Sekunden wird sie vom Timer notifiziert und ruft den
+	aktuellen Euro - Schweizer Franken Wechselkurs ab und speichert ihn in einer
+	fortlaufenden Liste.
+	Bei einem GET auf currencyobs wird die Wechselkurs-History zurückgegeben.
+	
+- responds
+	Testet das Verhalten bei verspäteten Antworten einer Ressource.
+	Erwartet einen Payload der Form [accept][time] oder nichts
+	accept: request wird akzeptiert mit request.accept()
+	time: Zeit, bis Antwort erfolgt.
+		Falls keine Zeit angegeben ist, wird nicht geantwortet.
+	Beispiel:
+		"" = no accept, no response
+		"accept" = accept, no response
+		"accept77" = accept, response after 77 ms
+		"500" = no accept, response after 500 ms
+	
+- com_async und com_sync (communicator.js)
+	Testen die CoAPRequest API. Sendet standartmässig an responds, kann aber geändert
+	werden. Mit den 6 Subressourcen async, contentType, locationPath, method, timeout
+	und uri werden die Werte des CoAPRequest gesetzt. Mit der Subressource send
+	wird der Request abgeschickt. Siehe dazu auch Kommenter in communicator.js.
+	(communicator.js ist die App, com_async und com_sync sind zwei unabhängige
+	Instanzen davon)
+	
+- performance
+	Zum testen der Performance von Rhino. Verwende "fib", "quick" oder "newton", um
+	zwischen den Algorithmen Fibonacci, Quicksort und Newton Square Root zu wählen.
+	Siehe dazu auch Kommentar in performance.js.
+	
+	
+7. SimpleAppServer
+	Führt nur eine einzige App aus. Ist für einen Start in der Konsole gedacht.
+	C:\...\AppServer>java -cp bin/;lib/js-14.jar;lib/Californium.jar;lib/E4XUtils.jar ch.ethz.inf.vs.appserver.SimpleAppServer appserver/installed/storage.js
+	
+	
+8. JavaScript programmieren
+	Um GET, POST, PUT oder DELETE Handler zu verwenden, schreibe
+	app.root.onget = fnc;
+	app.root.onpost = fnc;
+	app.root.onput = fnc;
+	app.root.ondelete = fnc;
+	fnc = function(request) { 
+		request.respond(69,"Hello World"); 
+	}
+	
+	Um etwas in den Standart Ouput auszugeben, verwende
+	app.dump("Hello World");
+	app.error("Hello World");
+	
+	Um eine neue Ressource zu erstellen und an die App zu hängen, verwende
+	res = new JavaScriptResource(name);
+	app.root.addSubResource(res);
+	
+	
