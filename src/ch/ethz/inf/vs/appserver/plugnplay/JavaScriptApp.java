@@ -233,6 +233,8 @@ public class JavaScriptApp extends AbstractApp implements CoAPConstants {
 				Context cx = Context.enter();
 				Scriptable scope = onunload.getParentScope();
 				onunload.call(cx, scope, Context.toObject(jsaccess, scope), new Object[0]);
+			} catch (Throwable t) {
+				t.printStackTrace();
 			} finally {
 				Context.exit();
 			}

@@ -34,6 +34,8 @@ public abstract class AbstractSender implements Sender {
 				Context cx = Context.enter();
 				Scriptable scope = function.getParentScope();
 				function.call(cx, scope, Context.toObject(thisobj, scope), args);
+			} catch (Throwable t) {
+				t.printStackTrace();
 			} finally {
 				Context.exit();
 			}
