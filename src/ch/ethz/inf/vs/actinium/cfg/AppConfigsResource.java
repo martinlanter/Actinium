@@ -1,0 +1,90 @@
+package ch.ethz.inf.vs.actinium.cfg;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import coap.CodeRegistry;
+import coap.DELETERequest;
+import coap.GETRequest;
+import coap.POSTRequest;
+import coap.PUTRequest;
+import coap.Response;
+import endpoint.LocalResource;
+import endpoint.Resource;
+
+/**
+ * AppConfigResource contains the app's configs' resources. When an app is
+ * created, the corresponding resource will be added to the AppConfigsResource.
+ * <p>
+ * The parent of a AppConfigsResource is supposed to be an AppResource. When an
+ * app gets deleted, all configs correspondig to this app will be removed from
+ * AppConfigsResource by its AppResource parent.
+ * <p>
+ * On a GET reqeust, it AppConfigResource lists all configs it contains. POST,
+ * PUT and DELETE are not allowed.
+ * 
+ * @author Martin Lanter
+ */
+public class AppConfigsResource extends LocalResource {
+
+	// a list of all resources correspondig to one app's config each
+	private List<AppConfig> appconfigs;
+	
+	/**
+	 * Create a new AppConfigsResource with the specified resource identifier.
+	 * @param resourceIdentifier the identifier for this resource
+	 */
+	public AppConfigsResource(String resourceIdentifier) {
+		super(resourceIdentifier);
+		this.appconfigs = new ArrayList<AppConfig>();
+	}
+
+	/**
+	 * Adds a config, creates a correspondig resource and adds it as
+	 * subresource.
+	 * 
+	 * @param appconfig
+	 */
+	public void addConfig(AppConfig appconfig) {
+		String identifier = appconfig.getName();
+		appconfigs.add(appconfig);
+		
+		Resource res = appconfig.createConfigResource(identifier);
+		addSubResource(res);
+	}
+	
+	/**
+	 * Respond a list of all configs.
+	 */
+	@Override
+	public void performGET(GETRequest request) {
+		Response response = new Response(CodeRegistry.RESP_CONTENT);
+
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("Apps have the following configurations:\n");
+		for (AppConfig appcfg:appconfigs) {
+			String name = appcfg.getName();
+			String cfgresid = appcfg.getConfigResource().getResourceIdentifier(true);
+			buffer.append("	"+name+": "+cfgresid+"\n");
+		}
+		
+		response.setPayload(buffer.toString());
+		request.respond(response);
+	}
+
+	@Override
+	public void performPUT(PUTRequest request) {
+		request.respond(CodeRegistry.RESP_METHOD_NOT_ALLOWED);
+	}
+
+	@Override
+	public void performPOST(POSTRequest request) {
+		request.respond(CodeRegistry.RESP_METHOD_NOT_ALLOWED);
+	}
+
+	@Override
+	public void performDELETE(DELETERequest request) {
+		request.respond(CodeRegistry.RESP_METHOD_NOT_ALLOWED);
+	}
+
+}
