@@ -58,8 +58,8 @@ public class JavaScriptApp extends AbstractApp implements CoAPConstants {
 		"java.net",
 		"java.text",
 		"coap", // Response, CodeRegistry
-		"ch.ethz.inf.vs.appserver.jscoap", // CoAPRequest
-		"ch.ethz.inf.vs.appserver.jscoap.jserror" // CoAPRequest RequestErrorException
+		"ch.ethz.inf.vs.actinium.jscoap", // CoAPRequest
+		"ch.ethz.inf.vs.actinium.jscoap.jserror" // CoAPRequest RequestErrorException
 	};
 
 	/**

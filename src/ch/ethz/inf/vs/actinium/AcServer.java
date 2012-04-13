@@ -41,7 +41,7 @@ public class AcServer extends LocalEndpoint {
 	private StatsResource stats;
 	
 	/**
-	 * Constructs a new AppServer with the specified config.
+	 * Constructs a new Actinium app-server with the specified config.
 	 * @param config the app server's config.
 	 * @throws SocketException if the Socket is blocked.
 	 */

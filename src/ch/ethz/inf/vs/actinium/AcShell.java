@@ -15,14 +15,14 @@ import endpoint.LocalEndpoint;
  * A console based application that simulates an app server and runs a
  * JavaScriptApp specified in the arguments given in the main method.
  * <p>
- * Start SimpleAppServer with
+ * Start the ACtinium shell with
  * <pre>
- * java -cp bin/;lib/js-14.jar;lib/Californium.jar;lib/E4XUtils.jar ch.ethz.inf.vs.appserver.SimpleAppServer appserver/installed/storage.js -name ABC
+ * java -cp bin/;lib/js-14.jar;lib/Californium.jar;lib/E4XUtils.jar ch.ethz.inf.vs.actinium.AcShell appserver/installed/storage.js -name ABC
  * </pre>
  * 
  * @author Martin Lanter
  */
-public class SimpleAppServer extends LocalEndpoint {
+public class AcShell extends LocalEndpoint {
 
 	private static final int IDX_FILE = 0;
 
@@ -33,13 +33,13 @@ public class SimpleAppServer extends LocalEndpoint {
 	private String path;
 	private String name;
 	
-	public SimpleAppServer(String path, String name) throws SocketException {
+	public AcShell(String path, String name) throws SocketException {
 		super();
 		this.path = path;
 		this.name = name;
 	}
 	
-	public SimpleAppServer(String path, String name, int port) throws SocketException {
+	public AcShell(String path, String name, int port) throws SocketException {
 		super(port);
 		this.path = path;
 		this.name = name;
@@ -116,15 +116,15 @@ public class SimpleAppServer extends LocalEndpoint {
 			}
 			
 			// setup server and execute code
-			SimpleAppServer server;
-			if (port==-1) server = new SimpleAppServer(file, name);
-			else server = new SimpleAppServer(file, name, port);
+			AcShell server;
+			if (port==-1) server = new AcShell(file, name);
+			else server = new AcShell(file, name, port);
 			
 			System.out.println("Simple App Server listening on port "+server.port());
 			server.execute();
 			
 		} catch (Exception e) {
-			System.err.println("Failed to launch SimpleAppServer");
+			System.err.println("Failed to launch AcShell");
 			e.printStackTrace();
 			System.exit(ERR_INIT_FAILED);
 		}
