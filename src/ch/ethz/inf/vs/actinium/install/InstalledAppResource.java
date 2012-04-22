@@ -11,13 +11,13 @@ import java.util.Scanner;
 import ch.ethz.inf.vs.actinium.AppManager;
 import ch.ethz.inf.vs.actinium.cfg.AppConfig;
 import ch.ethz.inf.vs.actinium.cfg.Config;
-import coap.CodeRegistry;
-import coap.DELETERequest;
-import coap.GETRequest;
-import coap.POSTRequest;
-import coap.PUTRequest;
-import coap.Response;
-import endpoint.LocalResource;
+import ch.ethz.inf.vs.californium.coap.CodeRegistry;
+import ch.ethz.inf.vs.californium.coap.DELETERequest;
+import ch.ethz.inf.vs.californium.coap.GETRequest;
+import ch.ethz.inf.vs.californium.coap.POSTRequest;
+import ch.ethz.inf.vs.californium.coap.PUTRequest;
+import ch.ethz.inf.vs.californium.coap.Response;
+import ch.ethz.inf.vs.californium.endpoint.LocalResource;
 
 /**
  * InstalledAppResource represents an app's code, whichs is stored to the disk.
@@ -56,6 +56,8 @@ public class InstalledAppResource extends LocalResource {
 		this.name = name;
 		this.config = config;
 		this.manager = manager;
+		
+		isObservable(true);
 	}
 
 	/**

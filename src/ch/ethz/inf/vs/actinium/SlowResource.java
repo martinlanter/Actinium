@@ -1,8 +1,8 @@
 package ch.ethz.inf.vs.actinium;
 
-import coap.CodeRegistry;
-import coap.POSTRequest;
-import endpoint.LocalResource;
+import ch.ethz.inf.vs.californium.coap.CodeRegistry;
+import ch.ethz.inf.vs.californium.coap.POSTRequest;
+import ch.ethz.inf.vs.californium.endpoint.LocalResource;
 
 public class SlowResource extends LocalResource {
 
@@ -16,7 +16,7 @@ public class SlowResource extends LocalResource {
 	public void performPOST(POSTRequest request) {
 		
 		try {
-			System.out.println("Bearbeite request "+request.getID());
+			System.out.println("Bearbeite request "+request.getMID());
 			Thread.sleep(5000);
 			
 			request.respond(CodeRegistry.RESP_CONTENT, "counter = "+counter);

@@ -11,15 +11,15 @@ import java.util.Set;
 
 import org.mozilla.javascript.Function;
 
-import coap.DELETERequest;
-import coap.GETRequest;
-import coap.MediaTypeRegistry;
-import coap.Option;
-import coap.OptionNumberRegistry;
-import coap.POSTRequest;
-import coap.PUTRequest;
-import coap.Request;
-import coap.Response;
+import ch.ethz.inf.vs.californium.coap.DELETERequest;
+import ch.ethz.inf.vs.californium.coap.GETRequest;
+import ch.ethz.inf.vs.californium.coap.MediaTypeRegistry;
+import ch.ethz.inf.vs.californium.coap.Option;
+import ch.ethz.inf.vs.californium.coap.OptionNumberRegistry;
+import ch.ethz.inf.vs.californium.coap.POSTRequest;
+import ch.ethz.inf.vs.californium.coap.PUTRequest;
+import ch.ethz.inf.vs.californium.coap.Request;
+import ch.ethz.inf.vs.californium.coap.Response;
 
 /**
  * CoAPRequest implements the CoAPRequest API
@@ -331,8 +331,10 @@ public class CoAPRequest implements CoAPConstants {
 			return "";
 		if (error) return "";
 		if (response==null) return "";
-		String nl = "\r\n";
+		final String nl = "\r\n";
+		final String col = ": ";
 		StringBuffer buffer = new StringBuffer();
+		/*
 		Map<Integer, List<Option>> map = response.getOptionMap();
 		Set<Integer> set = map.keySet();
 		Integer[] keys = set.toArray(new Integer[set.size()]);
@@ -341,6 +343,13 @@ public class CoAPRequest implements CoAPConstants {
 			buffer.append(getResponseHeader(nr));
 			if (j<keys.length-1)
 				buffer.append(nl);
+		}
+		*/
+		for (Option opt : response.getOptions()) {
+			buffer.append(OptionNumberRegistry.toString(opt.getOptionNumber()));
+			buffer.append(col);
+			buffer.append(opt.toString());
+			buffer.append(nl);
 		}
 		return buffer.toString();
 	}
@@ -379,7 +388,7 @@ public class CoAPRequest implements CoAPConstants {
 		String sep = ", ";
 		StringBuffer buffer = new StringBuffer();
 		for (int i=0;i<opts.size();i++) {
-			buffer.append(opts.get(i).getDisplayValue());
+			buffer.append(opts.get(i).toString());
 			if (i<opts.size()-1)
 				buffer.append(sep);
 		}
@@ -472,7 +481,7 @@ public class CoAPRequest implements CoAPConstants {
 			request = new DELETERequest();
 		
 		} else {
-			throw new IllegalArgumentException("Unknown CoAP method: "+method+". Only \"GET\", \"POST\", \"PUT\" and \"DELETE\"� are allowed");
+			throw new IllegalArgumentException("Unknown CoAP method: "+method+". Only \"GET\", \"POST\", \"PUT\" and \"DELETE\" are allowed");
 		}
 		
 		request.setURI(uri);

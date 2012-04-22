@@ -2,8 +2,12 @@ package ch.ethz.inf.vs.actinium.plugnplay;
 
 import java.util.LinkedList;
 
-import coap.Request;
-import endpoint.Resource;
+import ch.ethz.inf.vs.californium.coap.CodeRegistry;
+import ch.ethz.inf.vs.californium.coap.GETRequest;
+import ch.ethz.inf.vs.californium.coap.ObservingManager;
+import ch.ethz.inf.vs.californium.coap.OptionNumberRegistry;
+import ch.ethz.inf.vs.californium.coap.Request;
+import ch.ethz.inf.vs.californium.endpoint.LocalResource;
 
 /**
  * Inspired by
@@ -29,7 +33,7 @@ public class WorkQueue {
 		//thread.start();
 	}
 
-	public void deliver(Request request, Resource resource) {
+	public void deliver(Request request, LocalResource resource) {
 		synchronized (queue) {
 			queue.addLast(new RequestDelivery(request, resource));
 			queue.notify(); // notifyAll not required
@@ -88,6 +92,30 @@ public class WorkQueue {
 				 */
 				try {
 					rd.request.dispatch(rd.resource);
+					
+					// check if resource did generate a response
+					if (rd.request.getResponse()!=null) {
+					
+						// check if resource is to be observed
+						if (rd.resource.isObservable() && rd.request instanceof GETRequest &&
+								CodeRegistry.responseClass(rd.request.getResponse().getCode())==CodeRegistry.CLASS_SUCCESS) {
+							
+							if (rd.request.hasOption(OptionNumberRegistry.OBSERVE)) {
+								
+								// establish new observation relationship
+								ObservingManager.getInstance().addObserver((GETRequest) rd.request, rd.resource);
+		
+							} else if (ObservingManager.getInstance().isObserved(rd.request.getPeerAddress().toString(), rd.resource)) {
+		
+								// terminate observation relationship on that resource
+								ObservingManager.getInstance().removeObserver(rd.request.getPeerAddress().toString(), rd.resource);
+							}
+							
+						}
+						
+						// send response here
+						rd.request.sendResponse();
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -97,8 +125,8 @@ public class WorkQueue {
 	
 	private class RequestDelivery {
 		private Request request;
-		private Resource resource;
-		private RequestDelivery(Request request, Resource resource) {
+		private LocalResource resource;
+		private RequestDelivery(Request request, LocalResource resource) {
 			this.request = request;
 			this.resource = resource;
 		}

@@ -7,9 +7,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
 
-import coap.CodeRegistry;
-import coap.DELETERequest;
-import coap.POSTRequest;
+import ch.ethz.inf.vs.californium.coap.CodeRegistry;
+import ch.ethz.inf.vs.californium.coap.DELETERequest;
+import ch.ethz.inf.vs.californium.coap.POSTRequest;
 
 /**
  * An AppConfig contains the properties for an instance of an app. It contains

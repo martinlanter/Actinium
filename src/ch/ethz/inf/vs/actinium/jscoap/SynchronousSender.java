@@ -8,9 +8,9 @@ import ch.ethz.inf.vs.actinium.jscoap.jserror.AbortErrorException;
 import ch.ethz.inf.vs.actinium.jscoap.jserror.NetworkErrorException;
 import ch.ethz.inf.vs.actinium.jscoap.jserror.RequestErrorException;
 import ch.ethz.inf.vs.actinium.jscoap.jserror.TimeoutErrorException;
-import coap.Request;
-import coap.Response;
-import coap.ResponseHandler;
+import ch.ethz.inf.vs.californium.coap.Request;
+import ch.ethz.inf.vs.californium.coap.Response;
+import ch.ethz.inf.vs.californium.coap.ResponseHandler;
 
 /**
  * SynchronousSender implements the process to send a request synchronously.

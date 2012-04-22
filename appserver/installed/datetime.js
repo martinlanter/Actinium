@@ -35,7 +35,7 @@ function MyDate(ts) {
 	};
 	
 	this.resDate = new JavaScriptResource(this.getId());
-	this.resDate.setResourceTitle(this.getDescription());
+	this.resDate.setTitle(this.getDescription());
 
 	var mythis = this;
 	this.resDate.onget = function(request) {
@@ -80,7 +80,8 @@ function MyTime(ts) {
 	};
 	
 	this.resTime = new JavaScriptResource(this.getId());
-	this.resTime.setResourceTitle(this.getDescription());
+	this.resTime.setTitle(this.getDescription());
+	this.resTime.isObservable(true);
 	
 	var mythis = this;
 	this.resTime.onget = function(request) {

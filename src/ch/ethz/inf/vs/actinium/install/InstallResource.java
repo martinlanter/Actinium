@@ -5,16 +5,16 @@ import java.util.List;
 
 import ch.ethz.inf.vs.actinium.AppManager;
 import ch.ethz.inf.vs.actinium.cfg.Config;
-import coap.CodeRegistry;
-import coap.DELETERequest;
-import coap.GETRequest;
-import coap.Option;
-import coap.OptionNumberRegistry;
-import coap.POSTRequest;
-import coap.PUTRequest;
-import coap.Request;
-import coap.Response;
-import endpoint.LocalResource;
+import ch.ethz.inf.vs.californium.coap.CodeRegistry;
+import ch.ethz.inf.vs.californium.coap.DELETERequest;
+import ch.ethz.inf.vs.californium.coap.GETRequest;
+import ch.ethz.inf.vs.californium.coap.Option;
+import ch.ethz.inf.vs.californium.coap.OptionNumberRegistry;
+import ch.ethz.inf.vs.californium.coap.POSTRequest;
+import ch.ethz.inf.vs.californium.coap.PUTRequest;
+import ch.ethz.inf.vs.californium.coap.Request;
+import ch.ethz.inf.vs.californium.coap.Response;
+import ch.ethz.inf.vs.californium.endpoint.LocalResource;
 
 /**
  * The InstallResource is the parent resource of all available apps which an
@@ -183,7 +183,7 @@ public class InstallResource extends LocalResource {
 		InstalledAppResource res = new InstalledAppResource(config, name, payload, manager);
 		addInstalledAppResource(res);
 		
-		return res.getResourcePath();
+		return res.getPath();
 	}
 	
 	/**

@@ -9,7 +9,7 @@ import java.util.Scanner;
 import ch.ethz.inf.vs.actinium.cfg.AppConfig;
 import ch.ethz.inf.vs.actinium.plugnplay.JavaScriptApp;
 
-import endpoint.LocalEndpoint;
+import ch.ethz.inf.vs.californium.endpoint.LocalEndpoint;
 
 /**
  * A console based application that simulates an app server and runs a

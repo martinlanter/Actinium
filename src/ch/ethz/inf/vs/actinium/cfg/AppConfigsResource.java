@@ -3,14 +3,14 @@ package ch.ethz.inf.vs.actinium.cfg;
 import java.util.ArrayList;
 import java.util.List;
 
-import coap.CodeRegistry;
-import coap.DELETERequest;
-import coap.GETRequest;
-import coap.POSTRequest;
-import coap.PUTRequest;
-import coap.Response;
-import endpoint.LocalResource;
-import endpoint.Resource;
+import ch.ethz.inf.vs.californium.coap.CodeRegistry;
+import ch.ethz.inf.vs.californium.coap.DELETERequest;
+import ch.ethz.inf.vs.californium.coap.GETRequest;
+import ch.ethz.inf.vs.californium.coap.POSTRequest;
+import ch.ethz.inf.vs.californium.coap.PUTRequest;
+import ch.ethz.inf.vs.californium.coap.Response;
+import ch.ethz.inf.vs.californium.endpoint.LocalResource;
+import ch.ethz.inf.vs.californium.endpoint.Resource;
 
 /**
  * AppConfigResource contains the app's configs' resources. When an app is
@@ -64,7 +64,7 @@ public class AppConfigsResource extends LocalResource {
 		buffer.append("Apps have the following configurations:\n");
 		for (AppConfig appcfg:appconfigs) {
 			String name = appcfg.getName();
-			String cfgresid = appcfg.getConfigResource().getResourceIdentifier(true);
+			String cfgresid = appcfg.getConfigResource().getPath();
 			buffer.append("	"+name+": "+cfgresid+"\n");
 		}
 		

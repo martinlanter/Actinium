@@ -5,9 +5,10 @@ import java.util.Observer;
 
 import ch.ethz.inf.vs.actinium.cfg.AppConfig;
 import ch.ethz.inf.vs.actinium.cfg.AbstractConfig.ConfigChangeSet;
-import coap.Request;
-import endpoint.LocalResource;
-import endpoint.Resource;
+
+import ch.ethz.inf.vs.californium.coap.Request;
+import ch.ethz.inf.vs.californium.endpoint.LocalResource;
+import ch.ethz.inf.vs.californium.endpoint.Resource;
 
 /**
  * AbstractApp is the parent class for all sorts of apps and a CoAP resource. So
@@ -55,7 +56,7 @@ public abstract class AbstractApp extends LocalResource implements PlugAndPlayab
 		
 		String resourceTitle = appcfg.getProperty(AppConfig.RESOURCE_TITLE);
 		if (resourceTitle!=null)
-			setResourceTitle(resourceTitle);
+			setTitle(resourceTitle);
 		
 		String resourceType = appcfg.getProperty(AppConfig.RESOURCE_TYPE);
 		if (resourceType!=null)
@@ -101,7 +102,7 @@ public abstract class AbstractApp extends LocalResource implements PlugAndPlayab
 			else if (running.equals(AppConfig.STOP) && started) shutdown();
 		}
 		if (set.contains(AppConfig.RESOURCE_TITLE)) {
-			setResourceTitle(appcfg.getProperty(AppConfig.RESOURCE_TITLE));
+			setTitle(appcfg.getProperty(AppConfig.RESOURCE_TITLE));
 		}
 		if (set.contains(AppConfig.RESOURCE_TYPE)) {
 			setResourceType(appcfg.getProperty(AppConfig.RESOURCE_TYPE));
@@ -184,7 +185,7 @@ public abstract class AbstractApp extends LocalResource implements PlugAndPlayab
 	 * @param request the request
 	 * @param resource the target resource
 	 */
-	public void deliverRequestToSubResource(Request request, Resource resource) {
+	public void deliverRequestToSubResource(Request request, LocalResource resource) {
 		requestReceiver.deliver(request, resource);
 	}
 	

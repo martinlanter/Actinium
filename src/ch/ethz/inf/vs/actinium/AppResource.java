@@ -12,8 +12,8 @@ import ch.ethz.inf.vs.actinium.cfg.AppConfigsResource;
 import ch.ethz.inf.vs.actinium.cfg.Config;
 import ch.ethz.inf.vs.actinium.cfg.AbstractConfig.ConfigChangeSet;
 import ch.ethz.inf.vs.actinium.plugnplay.AbstractApp;
-import coap.GETRequest;
-import endpoint.LocalResource;
+import ch.ethz.inf.vs.californium.coap.GETRequest;
+import ch.ethz.inf.vs.californium.endpoint.LocalResource;
 
 /**
  * AppResource is the root of all resources around instances of apps. It
@@ -190,16 +190,16 @@ public class AppResource extends LocalResource {
 	 * in the app config.
 	 */
 	private void addApp(final AbstractApp app) {
-		String tempid = app.getResourceIdentifier();
+		String tempid = app.getName();
 		
 //		identifier must be equal to name for stats
 //		// make sure, the new app has a valid identifier
 //		for (AbstractApp a:apps) {
-//			if (a.getResourceIdentifier().equals(tempid)) {
+//			if (a.getName().equals(tempid)) {
 //				System.out.println("Resource identifier "+tempid+" is already reserved.");
 //				tempid = createUniqueResourceId(tempid);
 //				System.out.println("Identify ressource with new identifier "+tempid);
-//				app.setResourceIdentifier(tempid);
+//				app.setName(tempid);
 //				break;
 //			}
 //		}
@@ -252,7 +252,7 @@ public class AppResource extends LocalResource {
 	private String createUniqueResourceId(String resid) {
 		HashSet<String> allids = new HashSet<String>();
 		for (AbstractApp a:apps)
-			allids.add(a.getResourceIdentifier());
+			allids.add(a.getName());
 		
 		for (int i=2;i<allids.size()+1+2;i++) {
 			String test = resid +"(" + i + ")";

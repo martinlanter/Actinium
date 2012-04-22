@@ -1,19 +1,20 @@
 package ch.ethz.inf.vs.actinium;
 
 import java.net.SocketException;
+import java.util.logging.Level;
 
 import ch.ethz.inf.vs.actinium.cfg.Config;
 import ch.ethz.inf.vs.actinium.install.InstallResource;
 import ch.ethz.inf.vs.actinium.plugnplay.AbstractApp;
-import coap.CodeRegistry;
-import coap.GETRequest;
-import coap.Option;
-import coap.OptionNumberRegistry;
-import coap.Request;
-import demonstrationServer.resources.MirrorResource;
-import endpoint.LocalEndpoint;
-import endpoint.LocalResource;
-import endpoint.Resource;
+import ch.ethz.inf.vs.californium.coap.CodeRegistry;
+import ch.ethz.inf.vs.californium.coap.Request;
+import ch.ethz.inf.vs.californium.coap.GETRequest;
+import ch.ethz.inf.vs.californium.coap.ObservingManager;
+import ch.ethz.inf.vs.californium.coap.OptionNumberRegistry;
+import ch.ethz.inf.vs.californium.endpoint.LocalEndpoint;
+import ch.ethz.inf.vs.californium.endpoint.LocalResource;
+import ch.ethz.inf.vs.californium.endpoint.Resource;
+import ch.ethz.inf.vs.californium.util.Log;
 
 /**
  * Actinium (Ac)
@@ -63,7 +64,7 @@ public class AcServer extends LocalEndpoint {
 		this.addResource(stats);
 		appres.startApps();
 		
-		this.addResource(new MirrorResource());
+		//this.addResource(new TODOResource());
 	}
 
 	/**
@@ -74,8 +75,7 @@ public class AcServer extends LocalEndpoint {
 	public void handleRequest(Request request) {
 		try {
 			// record message
-			String resid = getResourceIdentifier(request);
-			Resource resource = getResource(resid);
+			Resource resource = getResource( request.getUriPath() );
 			if (resource!=null)
 				stats.record(request, resource);
 			
@@ -95,11 +95,8 @@ public class AcServer extends LocalEndpoint {
 	private void deliverRequest(Request request) {
 		if (request != null) {
 
-			// retrieve resource identifier
-			String resourceIdentifier = getResourceIdentifier(request);
-
 			// lookup resource
-			LocalResource resource = getResource(resourceIdentifier);
+			LocalResource resource = getResource( request.getUriPath() );
 
 			// check if resource available
 			if (resource != null) {
@@ -118,23 +115,36 @@ public class AcServer extends LocalEndpoint {
 				} else { // request not for a subresource of an app
 					// invoke request handler of the resource
 					request.dispatch(resource);
-				}
-
-				// check if resource is to be observed
-				if (request instanceof GETRequest
-						&& request.hasOption(OptionNumberRegistry.OBSERVE)) {
-					// establish new observation relationship
-					resource.addObserveRequest((GETRequest) request);
-
-				} else if (resource.isObserved(request.endpointID())) {
-					// terminate observation relationship on that resource
-					resource.removeObserveRequest(request.endpointID());
+					
+					// check if resource did generate a response
+					if (request.getResponse()!=null) {
+					
+						// check if resource is to be observed
+						if (resource.isObservable() &&
+							request instanceof GETRequest &&
+							CodeRegistry.responseClass(request.getResponse().getCode())==CodeRegistry.CLASS_SUCCESS) {
+							
+							if (request.hasOption(OptionNumberRegistry.OBSERVE)) {
+								
+								// establish new observation relationship
+								ObservingManager.getInstance().addObserver((GETRequest) request, resource);
+		
+							} else if (ObservingManager.getInstance().isObserved(request.getPeerAddress().toString(), resource)) {
+		
+								// terminate observation relationship on that resource
+								ObservingManager.getInstance().removeObserver(request.getPeerAddress().toString(), resource);
+							}
+							
+						}
+						
+						// send response here
+						request.sendResponse();
+					}
 				}
 
 			} else {
 				// resource does not exist
-				System.out.printf("[%s] Resource not found: '%s'\n", getClass()
-						.getName(), resourceIdentifier);
+				System.out.printf("[%s] Resource not found: '%s'\n", getClass().getName(), request.getUriPath());
 
 				request.respond(CodeRegistry.RESP_NOT_FOUND);
 			}
@@ -150,7 +160,7 @@ public class AcServer extends LocalEndpoint {
 	 */
 	private String getAppName(Resource res) {
 		// path in this form: /apps/running/appname/...
-		String path = res.getResourcePath();
+		String path = res.getPath();
 		String[] parts = path.split("/"); // parts[0] is ""
 		
 		String idapps = config.getProperty(Config.APPS_RESOURCE_ID);
@@ -162,17 +172,6 @@ public class AcServer extends LocalEndpoint {
 			return null;
 		}
 	}
-
-	/**
-	 * Returns the resource identifier path to the target in the specified
-	 * request.
-	 * 
-	 * @param request the request
-	 * @return the resource identifier path to the request's target.
-	 */
-	private static String getResourceIdentifier(Request request) {
-		return Option.join(request.getOptions(OptionNumberRegistry.URI_PATH), "/");
-	}
 	
 	/**
 	 * Setups a new config and a new app server.
@@ -180,6 +179,10 @@ public class AcServer extends LocalEndpoint {
 	 */
 	public static void main(String[] args) {
 		try {
+
+			Log.setLevel(Level.WARNING);
+			Log.init();
+			
 			Config config = new Config();
 			AcServer server = new AcServer(config);
 			

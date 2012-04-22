@@ -12,14 +12,14 @@ import java.util.Properties;
 
 import org.mozilla.javascript.edu.emory.mathcs.backport.java.util.Arrays;
 
-import coap.CodeRegistry;
-import coap.DELETERequest;
-import coap.GETRequest;
-import coap.POSTRequest;
-import coap.PUTRequest;
-import coap.Response;
-import endpoint.LocalResource;
-import endpoint.Resource;
+import ch.ethz.inf.vs.californium.coap.CodeRegistry;
+import ch.ethz.inf.vs.californium.coap.DELETERequest;
+import ch.ethz.inf.vs.californium.coap.GETRequest;
+import ch.ethz.inf.vs.californium.coap.POSTRequest;
+import ch.ethz.inf.vs.californium.coap.PUTRequest;
+import ch.ethz.inf.vs.californium.coap.Response;
+import ch.ethz.inf.vs.californium.endpoint.LocalResource;
+import ch.ethz.inf.vs.californium.endpoint.Resource;
 
 /**
  * AbstractConfig is a Properties which also has tha capabilities of a CoAP

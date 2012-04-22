@@ -184,7 +184,7 @@ public class AppManager {
 		if (statsresource!=null)
 			statsresource.oninstallApp(app.getName());
 		
-		return app.getResourcePath();
+		return app.getPath();
 	}
 	
 	/**

@@ -33,7 +33,7 @@ import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.Uri_Path;
 import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.Uri_Port;
 import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.Uri_Query;
 import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.Valid;
-import coap.CodeRegistry;
+import ch.ethz.inf.vs.californium.coap.CodeRegistry;
 
 /**
  * CoAPConstants implements the most important constants from CoAP.

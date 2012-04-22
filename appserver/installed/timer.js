@@ -44,7 +44,8 @@ function Timer(millis, name) {
 		});
 		thread.start();
 	};
-	this.timerres.setResourceIdentifier(name);
+	this.timerres.setName(name);
+	this.timerres.isObservable(true);
 	app.root.addSubResource(this.timerres);
 	this.go();
 }
@@ -61,7 +62,7 @@ app.root.onpost = function(request) {
 	var name = request.getPayloadString();
 	if (!isInUse(name)) {
 		var timer = new Timer(1000,name);
-		var path = timer.timerres.getResourcePath();
+		var path = timer.timerres.getPath();
 		timers[timers.length] = name;
 		paths[paths.length] = path;
 		

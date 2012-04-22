@@ -2,13 +2,13 @@ package ch.ethz.inf.vs.actinium;
 
 import ch.ethz.inf.vs.actinium.cfg.Config;
 import ch.ethz.inf.vs.actinium.plugnplay.AbstractApp;
-import coap.CodeRegistry;
-import coap.DELETERequest;
-import coap.GETRequest;
-import coap.POSTRequest;
-import coap.PUTRequest;
-import endpoint.LocalResource;
-import endpoint.Resource;
+import ch.ethz.inf.vs.californium.coap.CodeRegistry;
+import ch.ethz.inf.vs.californium.coap.DELETERequest;
+import ch.ethz.inf.vs.californium.coap.GETRequest;
+import ch.ethz.inf.vs.californium.coap.POSTRequest;
+import ch.ethz.inf.vs.californium.coap.PUTRequest;
+import ch.ethz.inf.vs.californium.endpoint.LocalResource;
+import ch.ethz.inf.vs.californium.endpoint.Resource;
 
 /**
  * The RunningResource contains all running apps. RunningResource's parent is
@@ -47,7 +47,7 @@ public class RunningResource extends LocalResource {
 	public void performGET(GETRequest request) {
 		StringBuffer buffer = new StringBuffer();
 		for (Resource res:getSubResources())
-			buffer.append(res.getResourceIdentifier()+"\n");
+			buffer.append(res.getName()+"\n");
 		
 		request.respond(CodeRegistry.RESP_CONTENT, buffer.toString());
 	}

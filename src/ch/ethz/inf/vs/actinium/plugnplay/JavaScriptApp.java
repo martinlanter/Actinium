@@ -12,15 +12,17 @@ import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.WrappedException;
 
 import xmlhttp.XMLHttpRequest;
+
 import ch.ethz.inf.vs.actinium.cfg.AppConfig;
 import ch.ethz.inf.vs.actinium.cfg.AppType;
 import ch.ethz.inf.vs.actinium.jscoap.CoAPConstants;
 import ch.ethz.inf.vs.actinium.jscoap.JavaScriptResource;
-import coap.CodeRegistry;
-import coap.DELETERequest;
-import coap.GETRequest;
-import coap.POSTRequest;
-import coap.PUTRequest;
+
+import ch.ethz.inf.vs.californium.coap.CodeRegistry;
+import ch.ethz.inf.vs.californium.coap.DELETERequest;
+import ch.ethz.inf.vs.californium.coap.GETRequest;
+import ch.ethz.inf.vs.californium.coap.POSTRequest;
+import ch.ethz.inf.vs.californium.coap.PUTRequest;
 
 /**
  * JavaScriptApp executes apps written in JavaScript using Rhino.
@@ -57,7 +59,7 @@ public class JavaScriptApp extends AbstractApp implements CoAPConstants {
 		"java.io",
 		"java.net",
 		"java.text",
-		"coap", // Response, CodeRegistry
+		"ch.ethz.inf.vs.californium.coap", // Response, CodeRegistry
 		"ch.ethz.inf.vs.actinium.jscoap", // CoAPRequest
 		"ch.ethz.inf.vs.actinium.jscoap.jserror" // CoAPRequest RequestErrorException
 	};
@@ -144,8 +146,7 @@ public class JavaScriptApp extends AbstractApp implements CoAPConstants {
             
     		// add two global functions dump and addSubResource
             String[] names = { "dump", "addSubResource"};
-            scope.defineFunctionProperties(names, JavaScriptStaticAccess.class,
-                                           ScriptableObject.DONTENUM);
+            scope.defineFunctionProperties(names, JavaScriptStaticAccess.class, ScriptableObject.DONTENUM);
 
             try {
             	// Add AJAX' XMLHttpRequest to JavaScript

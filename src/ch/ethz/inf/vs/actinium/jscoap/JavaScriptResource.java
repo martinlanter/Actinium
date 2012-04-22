@@ -5,12 +5,12 @@ import org.mozilla.javascript.Function;
 import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
 
-import coap.DELETERequest;
-import coap.GETRequest;
-import coap.POSTRequest;
-import coap.PUTRequest;
-import coap.Request;
-import endpoint.LocalResource;
+import ch.ethz.inf.vs.californium.coap.DELETERequest;
+import ch.ethz.inf.vs.californium.coap.GETRequest;
+import ch.ethz.inf.vs.californium.coap.POSTRequest;
+import ch.ethz.inf.vs.californium.coap.PUTRequest;
+import ch.ethz.inf.vs.californium.coap.Request;
+import ch.ethz.inf.vs.californium.endpoint.LocalResource;
 
 /**
  * It is not possible to add further methods or fields to this class within

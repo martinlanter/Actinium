@@ -23,7 +23,7 @@ app.root.onpost = function(request) {
 	} else {
 		var storage = new Storage(name);
 		app.root.addSubResource(storage.res);
-		var path = storage.res.getResourcePath();
+		var path = storage.res.getPath();
 		subress[subress.length] = name;
 		paths[paths.length] = path;
 		
@@ -74,7 +74,7 @@ function Storage(name) {
 		} else {
 			var storage = new Storage(name);
 			mythis.res.addSubResource(storage.res);
-			var path = storage.res.getResourcePath();
+			var path = storage.res.getPath();
 			mythis.subress[mythis.subress.length] = name;
 			mythis.paths[mythis.paths.length] = path;
 

@@ -26,67 +26,137 @@
  */ 
 
 
-var measurements = 10;
-var n_fib = 25;
+var measurements = 100;
+var n_fib = 20;
 var n_quick = 10000;
 var n_newton = 1000000;
 
 app.root.onpost = function(request) {
 	request.accept();
 	
-	try {
-		var prep = null; // preparation function
-		var func; // function to mesaure
-		var arg;
-		var m = measurements;
-		
-		parts = request.getPayloadString().split(" ");
-		if (parts.length>0 && parts[0]=="fib") {
-			func = fibonacci;
-			arg = n_fib;
-		} else if (parts.length>0 && parts[0]=="quick") {
-			func = quick_sort;
-			arg = n_quick;
-			prep = prep_quick_sort;
-		} else if (parts.length>0 && parts[0]=="newton") {
-			func = newton_sqareroot;
-			arg = n_newton;
-		} else {
-			request.respond(CodeRegistry.RESP_BAD_REQUEST, "unknown function");
-		}
-		
-		if (parts.length>1) {
-			arg = Integer.parseInt(parts[1]);
-		}
-		
-		if (parts.length>2) {
-			m = Integer.parseInt(parts[2]);
-		}
-		
-		app.dump(parts[0],arg,m);
-		var dts = measure(func,prep,arg,m);
-		respond_measurement(request,dts);
-		
-	} catch (e if e.javaException instanceof Exception) {
-		request.respond(CodeRegistry.RESP_BAD_REQUEST, e.javaException.toString());
-	}
+	var what = request.getPayloadString();
+	var text = '';
+	
+//	app.dump('GOT: '+what);
+//	if (what=='fib') {
+		app.dump('Fibunacci');
+		text += 'fib\t20\t' + run('fib 20') + '\n';
+		text += 'fib\t20\t' + run('fib 20') + '\n';
+		text += 'fib\t21\t' + run('fib 21') + '\n';
+//		text += 'fib\t22\t' + run('fib 22') + '\n';
+//		text += 'fib\t23\t' + run('fib 23') + '\n';
+//		text += 'fib\t24\t' + run('fib 24') + '\n';
+		text += 'fib\t25\t' + run('fib 25') + '\n';
+//		text += 'fib\t26\t' + run('fib 26') + '\n';
+//		text += 'fib\t27\t' + run('fib 27') + '\n';
+//		text += 'fib\t28\t' + run('fib 28') + '\n';
+		text += 'fib\t29\t' + run('fib 29') + '\n';
+//		text += 'fib\t30\t' + run('fib 30') + '\n';
+//		text += 'fib\t31\t' + run('fib 31') + '\n';
+//		text += 'fib\t32\t' + run('fib 32') + '\n';
+//		text += 'fib\t33\t' + run('fib 33') + '\n';
+//		text += 'fib\t34\t' + run('fib 34') + '\n';
+//		text += 'fib\t35\t' + run('fib 35') + '\n';
+//
+//		app.dump('Quicksort');
+		text += 'quick\t5E3\t' + run('quick 5000') + '\n';
+		text += 'quick\t5E3\t' + run('quick 5000') + '\n';
+//		text += 'quick\t1E4\t' + run('quick 10000') + '\n';
+//		text += 'quick\t2E4\t' + run('quick 20000') + '\n';
+//		text += 'quick\t3E4\t' + run('quick 30000') + '\n';
+//		text += 'quick\t4E4\t' + run('quick 40000') + '\n';
+//		text += 'quick\t5E4\t' + run('quick 50000') + '\n';
+//		text += 'quick\t6E4\t' + run('quick 60000') + '\n';
+//		text += 'quick\t7E4\t' + run('quick 70000') + '\n';
+//		text += 'quick\t8E4\t' + run('quick 80000') + '\n';
+//		text += 'quick\t9E4\t' + run('quick 90000') + '\n';
+//		text += 'quick\t1E5\t' + run('quick 100000') + '\n';
+//		text += 'quick\t2E5\t' + run('quick 200000') + '\n';
+//		text += 'quick\t3E5\t' + run('quick 300000') + '\n';
+//		text += 'quick\t4E5\t' + run('quick 400000') + '\n';
+//		text += 'quick\t5E5\t' + run('quick 500000') + '\n';
+//		text += 'quick\t6E5\t' + run('quick 600000') + '\n';
+//		text += 'quick\t7E5\t' + run('quick 700000') + '\n';
+//		text += 'quick\t8E5\t' + run('quick 800000') + '\n';
+//		text += 'quick\t9E5\t' + run('quick 900000') + '\n';
+//		text += 'quick\t1E6\t' + run('quick 1000000') + '\n';
+//
+//		app.dump('Newton');
+		text += 'newton\t1E3\t' + run('newton 1000') + '\n';
+		text += 'newton\t1E3\t' + run('newton 1000') + '\n';
+//		text += 'newton\t1E4\t' + run('newton 10000') + '\n';
+//		text += 'newton\t1E5\t' + run('newton 100000') + '\n';
+//		text += 'newton\t1E6\t' + run('newton 1000000') + '\n';
+		text += 'newton\t1E7\t' + run('newton 10000000') + '\n';
+
+//	}
+	app.dump('DONE');
+	
+	request.respond(69, text);
 }
 
-function respond_measurement(request, dts) {
+function run(what) {
+	
+	var prep = null; // preparation function
+	var func; // function to mesaure
+	var arg;
+	var m = measurements;
+	
+	parts = what.split(" ");
+	if (parts.length>0 && parts[0]=="fib") {
+		func = fibonacci;
+		arg = n_fib;
+	} else if (parts.length>0 && parts[0]=="quick") {
+		func = quick_sort;
+		arg = n_quick;
+		prep = prep_quick_sort;
+	} else if (parts.length>0 && parts[0]=="newton") {
+		func = newton_sqareroot;
+		arg = n_newton;
+	} else {
+		request.respond(CodeRegistry.RESP_BAD_REQUEST, "unknown function");
+		return;
+	}
+	
+	if (parts.length>1) {
+		arg = parseInt(parts[1]);
+	}
+	
+	if (parts.length>2) {
+		m = parseInt(parts[2]);
+	}
+	
+	var dts = measure(func,prep,arg,m);
+	var text = respond_measurement(dts);
+
+	app.dump(parts[0], ''+arg, text);
+	
+	return text;
+}
+
+function respond_measurement(dts) {
 	var avg = 0;
-	var min = Long.MAX_VALUE;
+	var min = Number.MAX_VALUE;
+	var max = 0;
 	
 	for (var i=0;i<dts.length;i++) {
 		avg += dts[i];
-		
-		if (min>dts[i]) {
-			min = dts[i];
-		}
+
+		if (dts[i]<min) min = dts[i];
+		if (dts[i]>max) max = dts[i];
 	}
 	avg = avg/dts.length;
 	
-	app.dump("min = "+(min/1000000)+" ms, avg = "+(avg/1000000)+" ms");
-	request.respond(CodeRegistry.RESP_CONTENT, "min = "+(min/1000000)+" ms, avg = "+(avg/1000000)+" ms");
+	//stdev
+	var stdev = 0;
+	for (var i=0;i<dts.length;i++) {
+		stdev += Math.pow(dts[i]-avg, 2);
+	}
+	
+	//var text = 'Minimum = ' + (min/1000000) + 'ms, Maximum = ' + (max/1000000) + 'ms, Average = ' + (avg/1000000) + 'ms, Std.Deviation = ' + Math.sqrt(stdev/dts.length)/1000000;
+	var text = '' + (min/1000000) + '\t' + (max/1000000) + '\t' + (avg/1000000) + '\t' + Math.sqrt(stdev/dts.length)/1000000;
+	
+	return text;
 }
 
 function measure(func, prep, arg, m) {
@@ -107,7 +177,7 @@ function measure(func, prep, arg, m) {
 		var dt = app.getNanoTime()-t0;
 		dts[dts.length] = dt;
 		
-		app.dump("dt: "+(dt/1000000)+" ms");
+		//app.dump("dt: "+(dt/1000000)+" ms");
 	}
 	return dts;
 }
@@ -118,10 +188,9 @@ function fibonacci(n) {
 }
 
 function prep_quick_sort(size) {
-	var rand = new Random();
 	var array = new Array();
 	for (var i=0;i<size; i++) {
-		array[i] = rand.nextInt();
+		array.push(Math.random());
 	}
 	return array;
 }

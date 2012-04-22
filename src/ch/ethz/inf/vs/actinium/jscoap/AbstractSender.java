@@ -4,8 +4,8 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.Scriptable;
 
-import coap.Request;
-import coap.Response;
+import ch.ethz.inf.vs.californium.coap.Request;
+import ch.ethz.inf.vs.californium.coap.Response;
 
 /**
  * AbstractSender provides methods for calling JavaScript functions (listeners).

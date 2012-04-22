@@ -7,9 +7,9 @@ import java.util.TimerTask;
 import org.mozilla.javascript.Function;
 
 import ch.ethz.inf.vs.actinium.jscoap.jserror.NetworkErrorException;
-import coap.Request;
-import coap.Response;
-import coap.ResponseHandler;
+import ch.ethz.inf.vs.californium.coap.Request;
+import ch.ethz.inf.vs.californium.coap.Response;
+import ch.ethz.inf.vs.californium.coap.ResponseHandler;
 
 /**
  * AsynchronousSender implements the process to send a request assynchronously.

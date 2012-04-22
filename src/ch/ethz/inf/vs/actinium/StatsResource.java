@@ -8,14 +8,14 @@ import java.util.HashMap;
 
 import ch.ethz.inf.vs.actinium.cfg.Config;
 import ch.ethz.inf.vs.actinium.plugnplay.AbstractApp;
-import coap.CodeRegistry;
-import coap.DELETERequest;
-import coap.GETRequest;
-import coap.POSTRequest;
-import coap.PUTRequest;
-import coap.Request;
-import endpoint.LocalResource;
-import endpoint.Resource;
+import ch.ethz.inf.vs.californium.coap.CodeRegistry;
+import ch.ethz.inf.vs.californium.coap.DELETERequest;
+import ch.ethz.inf.vs.californium.coap.GETRequest;
+import ch.ethz.inf.vs.californium.coap.POSTRequest;
+import ch.ethz.inf.vs.californium.coap.PUTRequest;
+import ch.ethz.inf.vs.californium.coap.Request;
+import ch.ethz.inf.vs.californium.endpoint.LocalResource;
+import ch.ethz.inf.vs.californium.endpoint.Resource;
 
 /**
  * Statsresource holds the stats of all app instances and their subresources.
@@ -80,7 +80,7 @@ public class StatsResource extends LocalResource {
 		// if appname==null use the appinfo for all non-app resources
 		AppInfo appinfo = appinfos.get(appname);
 		
-		String path = resource.getResourcePath();
+		String path = resource.getPath();
 		ResourceInfo resinfo = resinfos.get(path);
 		if (resinfo==null) { 
 			// if no information about this resource available, create a new one
@@ -218,7 +218,7 @@ public class StatsResource extends LocalResource {
 	 * @param buffer - the buffer to which the text is added to
 	 */
 	private void addRequestCounter(Resource res, StringBuffer buffer) {
-		String respath = res.getResourcePath();
+		String respath = res.getPath();
 		buffer.append("\n\t"+respath+":");
 		ResourceInfo resinfo = resinfos.get(respath);
 		if (resinfo==null) {
@@ -248,7 +248,7 @@ public class StatsResource extends LocalResource {
 	 */
 	private String getAppName(Resource res) {
 		// path in this form: /apps/running/appname/...
-		String path = res.getResourcePath();
+		String path = res.getPath();
 		String[] parts = path.split("/"); // parts[0] is ""
 		
 		String idapps = config.getProperty(Config.APPS_RESOURCE_ID);

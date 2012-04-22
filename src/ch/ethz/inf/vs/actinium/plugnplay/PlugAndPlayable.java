@@ -1,6 +1,6 @@
 package ch.ethz.inf.vs.actinium.plugnplay;
 
-import coap.RequestHandler;
+import ch.ethz.inf.vs.californium.coap.RequestHandler;
 
 /**
  * PlugAndPlayable is the interface for all apps. Apps must be able to start,
