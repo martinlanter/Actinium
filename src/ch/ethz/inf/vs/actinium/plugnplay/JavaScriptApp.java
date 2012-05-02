@@ -2,7 +2,10 @@ package ch.ethz.inf.vs.actinium.plugnplay;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
@@ -146,7 +149,8 @@ public class JavaScriptApp extends AbstractApp implements CoAPConstants {
             
     		// add two global functions dump and addSubResource
             String[] names = { "dump", "addSubResource"};
-            scope.defineFunctionProperties(names, JavaScriptStaticAccess.class, ScriptableObject.DONTENUM);
+            scope.defineFunctionProperties(names, JavaScriptStaticAccess.class,
+                                           ScriptableObject.DONTENUM);
 
             try {
             	// Add AJAX' XMLHttpRequest to JavaScript
@@ -188,11 +192,6 @@ public class JavaScriptApp extends AbstractApp implements CoAPConstants {
 		if (thread!=null)
 			return thread.getId();
 		else return -1;
-	}
-	
-	@Override
-	public void changed() {
-		super.changed();
 	}
 	
 	@Override
@@ -262,9 +261,15 @@ public class JavaScriptApp extends AbstractApp implements CoAPConstants {
 	 * and further functions.
 	 */
 	public class JavaScriptAccess implements CoAPConstants {
+		
 		public JavaScriptApp root = JavaScriptApp.this; // "app.root"
 		
 		public Function onunload = null; // "app.onunload = ..."
+		
+		private HashMap<Integer, JavaScriptTimeoutTask> tasks = 
+			new HashMap<Integer, JavaScriptTimeoutTask>(); // tasks and their id
+		private Timer timer = new Timer(getName()+"-timer", true); // timer to schedule tasks
+		private int timernr = 1; // increasing task counter
 		
 		/**
 		 * Prints to the standard output stream
@@ -368,6 +373,117 @@ public class JavaScriptApp extends AbstractApp implements CoAPConstants {
 		 */
 		public String getProperty(String key, String dflt) {
 			return appcfg.getProperty(key, dflt);
+		}
+
+		/**
+		 * Creates a new Task for the specified function and the specified
+		 * arguments and adds it to the timer.
+		 * 
+		 * @param function the function to call
+		 * @param millis the time until the function is called in milliseconds
+		 * @param args the arguments for the function
+		 * @return the id of the created task
+		 */
+		public synchronized int setTimeout(Function function, long millis, Object... args) {
+			if (function==null) throw new NullPointerException("app.setTimeout expects function not null");
+			int nr = timernr++;
+			JavaScriptTimeoutTask task = new JavaScriptTimeoutTask(function, args);
+			tasks.put(nr, task);
+			timer.schedule(task, millis);
+			return nr;
+		}
+		
+		/**
+		 * Cancels the specified task
+		 * 
+		 * @param id the task's id
+		 */
+		public synchronized void clearTimeout(int id) {
+			JavaScriptTimeoutTask task = tasks.get(id);
+			if (task!=null) {
+				task.cancel();
+			}
+		}
+
+		/**
+		 * Creates a new Task for the specified function and the specified
+		 * arguments and adds it to the timer. The timer executes it
+		 * subsequentially after the specified amount of time.
+		 * 
+		 * @param function the function to call
+		 * @param millis the time until the function is called in milliseconds
+		 * @param args the arguments for the function
+		 * @return the id of the created task
+		 */
+		public synchronized int setInterval(Function function, long millis, Object... args) {
+			if (function==null) throw new NullPointerException("app.setInterval expects function not null");
+			int nr = timernr++;
+			JavaScriptTimeoutTask task = new JavaScriptTimeoutTask(function, args);
+			tasks.put(nr, task);
+			timer.scheduleAtFixedRate(task, millis, millis);
+			return nr;
+		}
+		
+		/**
+		 * Cancels the specified task
+		 * 
+		 * @param id the task's id
+		 */
+		public synchronized void clearInterval(int id) {
+			clearTimeout(id);
+		}
+	}
+	
+	/**
+	 * When app.setTimeout is called a new task for a specified function is
+	 * created and added to the timer. After the specified milliseconds have
+	 * passed this task is executed and adds the function to the worker
+	 * queue of the app.The app's thread executes this runnable and calls
+	 * the specified function.
+	 */
+	// This class must be a inner class so that deliveRunnable() can be called.
+	// Ugly but neccessary.
+	private class JavaScriptTimeoutTask extends TimerTask {
+		
+		private Function function; // the function
+		private Object[] args; // the arguments
+		
+		public JavaScriptTimeoutTask(Function function, Object[] args) {
+			this.function = function;
+			this.args = args;
+		}
+
+		/**
+		 * This function is called from the timer after the specified amount
+		 * of time has passed. It then adds a Runnable to the apps worker
+		 * queue. The app's thread executes this runnable and calls the
+		 * specified function.
+		 */
+		@Override
+		public void run() {
+			// add function to working queue
+			deliveRunnable(new FunctionExecuter());
+		}
+
+		/**
+		 * FunctionExecuter only wraps the function call. Therefore it can
+		 * be added to the app's worker queue.
+		 */
+		private class FunctionExecuter implements Runnable {
+			public void run() {
+				try {
+					// call function
+					Context cx = Context.enter();
+					Scriptable scope = function.getParentScope();
+					// there is no this-object for this function, not even jsaccess, so it's null
+					function.call(cx, scope, null, args);
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					Context.exit();
+				}
+			}
 		}
 	}
 

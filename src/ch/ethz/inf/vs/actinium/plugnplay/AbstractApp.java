@@ -190,6 +190,14 @@ public abstract class AbstractApp extends LocalResource implements PlugAndPlayab
 	}
 	
 	/**
+	 * Delivers the specified Runnable to the app's worker queue
+	 * @param runnable the runnable
+	 */
+	public void deliveRunnable(Runnable runnable) {
+		requestReceiver.deliver(runnable);
+	}
+	
+	/**
 	 * Returns true, if this app is allowed to print to the output stream.
 	 * @return true, if this app is allowed to print to the output stream.
 	 */

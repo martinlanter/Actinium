@@ -18,14 +18,14 @@ import ch.ethz.inf.vs.californium.endpoint.LocalResource;
 public class WorkQueue {
 	
 	private final PoolWorker thread;
-	private final LinkedList<RequestDelivery> queue;
+	private final LinkedList<Runnable> queue;
 
 	public WorkQueue() {
 		this(null);
 	}
 	
 	public WorkQueue(String name) {
-		queue = new LinkedList<WorkQueue.RequestDelivery>();
+		queue = new LinkedList<Runnable>();
 		if (name==null)
 			thread = new PoolWorker();
 		else
@@ -36,6 +36,13 @@ public class WorkQueue {
 	public void deliver(Request request, LocalResource resource) {
 		synchronized (queue) {
 			queue.addLast(new RequestDelivery(request, resource));
+			queue.notify(); // notifyAll not required
+		}
+	}
+	
+	public void deliver(Runnable runnable) {
+		synchronized (queue) {
+			queue.addLast(runnable);
 			queue.notify(); // notifyAll not required
 		}
 	}
@@ -72,63 +79,66 @@ public class WorkQueue {
 		}
 		
 		public void run() {
-			RequestDelivery rd;
-			
+			Runnable r;
 			while (true) {
-				// wait for another request to deliver
+				// wait for another task to execute
 				synchronized (queue) {
 					while (queue.isEmpty()) {
 						try {
 							queue.wait();
 						} catch (InterruptedException ignored) { }
 					}
-
-					rd = queue.removeFirst();
-				}
-
-				/*
-				 * Calls performXXX Method. If an exception occurs it must be
-				 * caught, to ensure, the thread doesn't stop.
-				 */
-				try {
-					rd.request.dispatch(rd.resource);
-					
-					// check if resource did generate a response
-					if (rd.request.getResponse()!=null) {
-					
-						// check if resource is to be observed
-						if (rd.resource.isObservable() && rd.request instanceof GETRequest &&
-								CodeRegistry.responseClass(rd.request.getResponse().getCode())==CodeRegistry.CLASS_SUCCESS) {
-							
-							if (rd.request.hasOption(OptionNumberRegistry.OBSERVE)) {
-								
-								// establish new observation relationship
-								ObservingManager.getInstance().addObserver((GETRequest) rd.request, rd.resource);
-		
-							} else if (ObservingManager.getInstance().isObserved(rd.request.getPeerAddress().toString(), rd.resource)) {
-		
-								// terminate observation relationship on that resource
-								ObservingManager.getInstance().removeObserver(rd.request.getPeerAddress().toString(), rd.resource);
-							}
-							
-						}
-						
-						// send response here
-						rd.request.sendResponse();
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
+					r = queue.removeFirst();
+					r.run();
 				}
 			}
 		}
 	}
 	
-	private class RequestDelivery {
+	private class RequestDelivery implements Runnable {
+		
 		private Request request;
 		private LocalResource resource;
+		
 		private RequestDelivery(Request request, LocalResource resource) {
 			this.request = request;
 			this.resource = resource;
+		}
+		
+		public void run() {
+			/*
+			 * Calls performXXX Method. If an exception occurs it must be
+			 * caught, to ensure, the thread doesn't stop.
+			 */
+			try {
+				request.dispatch(resource);
+				
+				// check if resource did generate a response
+				if (request.getResponse()!=null) {
+				
+					// check if resource is to be observed
+					if (resource.isObservable() && request instanceof GETRequest &&
+							CodeRegistry.responseClass(request.getResponse().getCode())==CodeRegistry.CLASS_SUCCESS) {
+						
+						if (request.hasOption(OptionNumberRegistry.OBSERVE)) {
+							
+							// establish new observation relationship
+							ObservingManager.getInstance().addObserver((GETRequest) request, resource);
+	
+						} else if (ObservingManager.getInstance().isObserved(request.getPeerAddress().toString(), resource)) {
+	
+							// terminate observation relationship on that resource
+							ObservingManager.getInstance().removeObserver(request.getPeerAddress().toString(), resource);
+						}
+						
+					}
+					
+					// send response here
+					request.sendResponse();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
