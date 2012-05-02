@@ -147,6 +147,7 @@ public class AcServer extends LocalEndpoint {
 				System.out.printf("[%s] Resource not found: '%s'\n", getClass().getName(), request.getUriPath());
 
 				request.respond(CodeRegistry.RESP_NOT_FOUND);
+				request.sendResponse();
 			}
 		}
 	}
