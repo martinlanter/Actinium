@@ -46,7 +46,7 @@ function Timer(millis, name) {
 	};
 	this.timerres.setName(name);
 	this.timerres.isObservable(true);
-	app.root.addSubResource(this.timerres);
+	app.root.add(this.timerres);
 	this.go();
 }
 

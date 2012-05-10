@@ -65,12 +65,12 @@ public class AppResource extends LocalResource {
 		this.apps = new LinkedList<AbstractApp>();
 		
 		this.appConfigsRes = new AppConfigsResource(config.getProperty(Config.APP_CONFIG_RESOURSES));
-		addSubResource(appConfigsRes);
+		add(appConfigsRes);
 		
 		this.runningRes = new RunningResource(config);
-		addSubResource(runningRes);
+		add(runningRes);
 		
-//		addSubResource(
+//		add(
 //				config.createConfigResource(config.getProperty(Config.CONFIG_RESOURCE_ID)));
 		
 		List<AbstractApp> allapps = manager.loadAllApps();

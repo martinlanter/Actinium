@@ -36,6 +36,6 @@ public class JavaScriptStaticAccess {
     	
     	Resource parent = (Resource) Context.jsToJava(args[0],Resource.class);
     	Resource child = (Resource) Context.jsToJava(args[1],Resource.class);
-    	parent.addSubResource(child);	    	
+    	parent.add(child);	    	
     }
 }

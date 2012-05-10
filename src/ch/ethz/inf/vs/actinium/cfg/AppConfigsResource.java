@@ -50,7 +50,7 @@ public class AppConfigsResource extends LocalResource {
 		appconfigs.add(appconfig);
 		
 		Resource res = appconfig.createConfigResource(identifier);
-		addSubResource(res);
+		add(res);
 	}
 	
 	/**

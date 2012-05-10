@@ -111,8 +111,8 @@ function DateTime(ts,id) {
 		request.respond(CodeRegistry.RESP_CONTENT,mythis.date.getDate()+" - "+mythis.time.getTime());
 	};
 	
-	this.resource.addSubResource(this.date.resDate);
-	this.resource.addSubResource(this.time.resTime);
+	this.resource.add(this.date.resDate);
+	this.resource.add(this.time.resTime);
 }
 
 DateTime.prototype.getDescription = function() {
@@ -128,9 +128,9 @@ var datetimeUTC = new DateTime(utc,"Coordinated Universal Time");
 var datetimeEST = new DateTime(utc - 5*hour,"Eastern Standard Time");
 var datetimeKST = new DateTime(utc - 8*hour,"Pacific Standart Time");
 
-app.root.addSubResource(datetimePST.resource);
-app.root.addSubResource(datetimeCET.resource);
-app.root.addSubResource(datetimeUTC.resource);
-app.root.addSubResource(datetimeEST.resource);
-app.root.addSubResource(datetimeKST.resource);
+app.root.add(datetimePST.resource);
+app.root.add(datetimeCET.resource);
+app.root.add(datetimeUTC.resource);
+app.root.add(datetimeEST.resource);
+app.root.add(datetimeKST.resource);
 

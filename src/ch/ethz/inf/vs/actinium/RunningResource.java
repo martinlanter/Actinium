@@ -37,7 +37,7 @@ public class RunningResource extends LocalResource {
 	 * @param app an app.
 	 */
 	public void addApp(AbstractApp app) {
-		addSubResource(app);
+		add(app);
 	}
 	
 	/**

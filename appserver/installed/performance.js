@@ -31,66 +31,63 @@ var n_fib = 20;
 var n_quick = 10000;
 var n_newton = 1000000;
 
-app.root.onpost = function(request) {
+app.root.onget = function(request) {
 	request.accept();
 	
 	var what = request.getPayloadString();
 	var text = '';
 	
-//	app.dump('GOT: '+what);
-//	if (what=='fib') {
-		app.dump('Fibunacci');
-		text += 'fib\t20\t' + run('fib 20') + '\n';
-		text += 'fib\t20\t' + run('fib 20') + '\n';
-		text += 'fib\t21\t' + run('fib 21') + '\n';
-//		text += 'fib\t22\t' + run('fib 22') + '\n';
-//		text += 'fib\t23\t' + run('fib 23') + '\n';
-//		text += 'fib\t24\t' + run('fib 24') + '\n';
-		text += 'fib\t25\t' + run('fib 25') + '\n';
-//		text += 'fib\t26\t' + run('fib 26') + '\n';
-//		text += 'fib\t27\t' + run('fib 27') + '\n';
-//		text += 'fib\t28\t' + run('fib 28') + '\n';
-		text += 'fib\t29\t' + run('fib 29') + '\n';
-//		text += 'fib\t30\t' + run('fib 30') + '\n';
-//		text += 'fib\t31\t' + run('fib 31') + '\n';
-//		text += 'fib\t32\t' + run('fib 32') + '\n';
-//		text += 'fib\t33\t' + run('fib 33') + '\n';
-//		text += 'fib\t34\t' + run('fib 34') + '\n';
-//		text += 'fib\t35\t' + run('fib 35') + '\n';
-//
-//		app.dump('Quicksort');
-		text += 'quick\t5E3\t' + run('quick 5000') + '\n';
-		text += 'quick\t5E3\t' + run('quick 5000') + '\n';
-//		text += 'quick\t1E4\t' + run('quick 10000') + '\n';
-//		text += 'quick\t2E4\t' + run('quick 20000') + '\n';
-//		text += 'quick\t3E4\t' + run('quick 30000') + '\n';
-//		text += 'quick\t4E4\t' + run('quick 40000') + '\n';
-//		text += 'quick\t5E4\t' + run('quick 50000') + '\n';
-//		text += 'quick\t6E4\t' + run('quick 60000') + '\n';
-//		text += 'quick\t7E4\t' + run('quick 70000') + '\n';
-//		text += 'quick\t8E4\t' + run('quick 80000') + '\n';
-//		text += 'quick\t9E4\t' + run('quick 90000') + '\n';
-//		text += 'quick\t1E5\t' + run('quick 100000') + '\n';
-//		text += 'quick\t2E5\t' + run('quick 200000') + '\n';
-//		text += 'quick\t3E5\t' + run('quick 300000') + '\n';
-//		text += 'quick\t4E5\t' + run('quick 400000') + '\n';
-//		text += 'quick\t5E5\t' + run('quick 500000') + '\n';
-//		text += 'quick\t6E5\t' + run('quick 600000') + '\n';
-//		text += 'quick\t7E5\t' + run('quick 700000') + '\n';
-//		text += 'quick\t8E5\t' + run('quick 800000') + '\n';
-//		text += 'quick\t9E5\t' + run('quick 900000') + '\n';
-//		text += 'quick\t1E6\t' + run('quick 1000000') + '\n';
-//
-//		app.dump('Newton');
-		text += 'newton\t1E3\t' + run('newton 1000') + '\n';
-		text += 'newton\t1E3\t' + run('newton 1000') + '\n';
-//		text += 'newton\t1E4\t' + run('newton 10000') + '\n';
-//		text += 'newton\t1E5\t' + run('newton 100000') + '\n';
-//		text += 'newton\t1E6\t' + run('newton 1000000') + '\n';
-		text += 'newton\t1E7\t' + run('newton 10000000') + '\n';
+	app.dump('Fibonacci');
+	run('fib 20'); // discart start-up
+	text += 'fib\t20\t' + run('fib 20') + '\n';
+	text += 'fib\t21\t' + run('fib 21') + '\n';
+	text += 'fib\t22\t' + run('fib 22') + '\n';
+	text += 'fib\t23\t' + run('fib 23') + '\n';
+	text += 'fib\t24\t' + run('fib 24') + '\n';
+	text += 'fib\t25\t' + run('fib 25') + '\n';
+	text += 'fib\t26\t' + run('fib 26') + '\n';
+	text += 'fib\t27\t' + run('fib 27') + '\n';
+	text += 'fib\t28\t' + run('fib 28') + '\n';
+	text += 'fib\t29\t' + run('fib 29') + '\n';
+	text += 'fib\t30\t' + run('fib 30') + '\n';
+	text += 'fib\t31\t' + run('fib 31') + '\n';
+	text += 'fib\t32\t' + run('fib 32') + '\n';
+	text += 'fib\t33\t' + run('fib 33') + '\n';
+	text += 'fib\t34\t' + run('fib 34') + '\n';
+	text += 'fib\t35\t' + run('fib 35') + '\n';
 
-//	}
+	app.dump('Quicksort');
+	run('quick 5000'); // discart start-up
+	text += 'quick\t5E3\t' + run('quick 5000') + '\n';
+	text += 'quick\t1E4\t' + run('quick 10000') + '\n';
+	text += 'quick\t2E4\t' + run('quick 20000') + '\n';
+	text += 'quick\t3E4\t' + run('quick 30000') + '\n';
+	text += 'quick\t4E4\t' + run('quick 40000') + '\n';
+	text += 'quick\t5E4\t' + run('quick 50000') + '\n';
+	text += 'quick\t6E4\t' + run('quick 60000') + '\n';
+	text += 'quick\t7E4\t' + run('quick 70000') + '\n';
+	text += 'quick\t8E4\t' + run('quick 80000') + '\n';
+	text += 'quick\t9E4\t' + run('quick 90000') + '\n';
+	text += 'quick\t1E5\t' + run('quick 100000') + '\n';
+	text += 'quick\t2E5\t' + run('quick 200000') + '\n';
+	text += 'quick\t3E5\t' + run('quick 300000') + '\n';
+	text += 'quick\t4E5\t' + run('quick 400000') + '\n';
+	text += 'quick\t5E5\t' + run('quick 500000') + '\n';
+
+	app.dump('Newton');
+	run('newton 1000'); // discart start-up
+	text += 'newton\t1E3\t' + run('newton 1000') + '\n';
+	text += 'newton\t1E4\t' + run('newton 10000') + '\n';
+	text += 'newton\t1E5\t' + run('newton 100000') + '\n';
+	text += 'newton\t1E6\t' + run('newton 1000000') + '\n';
+	text += 'newton\t2E6\t' + run('newton 2000000') + '\n';
+	text += 'newton\t3E6\t' + run('newton 3000000') + '\n';
+	text += 'newton\t4E6\t' + run('newton 4000000') + '\n';
+	text += 'newton\t5E6\t' + run('newton 5000000') + '\n';
+
 	app.dump('DONE');
+	
+	app.dump(text.length);
 	
 	request.respond(69, text);
 }

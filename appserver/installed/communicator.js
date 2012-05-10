@@ -36,13 +36,13 @@ var contentType = new Property("contentType", "null");
 var timeout = new Property("timeout", "1000");
 var send = new Send();
 
-app.root.addSubResource(uri.res);
-app.root.addSubResource(method.res);
-app.root.addSubResource(async.res);
-app.root.addSubResource(locationPath.res);
-app.root.addSubResource(contentType.res);
-app.root.addSubResource(timeout.res);
-app.root.addSubResource(send.res);
+app.root.add(uri.res);
+app.root.add(method.res);
+app.root.add(async.res);
+app.root.add(locationPath.res);
+app.root.add(contentType.res);
+app.root.add(timeout.res);
+app.root.add(send.res);
 
 app.root.onget = function(request) {
 	performRequest("GET", request);

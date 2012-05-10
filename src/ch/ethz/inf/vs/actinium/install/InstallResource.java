@@ -68,7 +68,7 @@ public class InstallResource extends LocalResource {
 	 * @param iar the InstalledAppResource
 	 */
 	private void addInstalledAppResource(InstalledAppResource iar) {
-		addSubResource(iar);
+		add(iar);
 	}
 	
 	/**
