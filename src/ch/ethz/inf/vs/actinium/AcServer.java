@@ -17,7 +17,7 @@ import ch.ethz.inf.vs.californium.endpoint.Resource;
 import ch.ethz.inf.vs.californium.util.Log;
 
 /**
- * Actinium (Ac)
+ * Actinium (Ac) App-server for Californium
  * <p>
  * An Actinium app-server creates a structure of CoAP resources to run arbitrary
  * JavaScript apps on it. Most Notably an InstallResource to install new apps

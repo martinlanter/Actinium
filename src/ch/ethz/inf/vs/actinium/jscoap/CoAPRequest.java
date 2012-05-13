@@ -19,6 +19,7 @@ import ch.ethz.inf.vs.californium.coap.POSTRequest;
 import ch.ethz.inf.vs.californium.coap.PUTRequest;
 import ch.ethz.inf.vs.californium.coap.Request;
 import ch.ethz.inf.vs.californium.coap.Response;
+import ch.ethz.inf.vs.californium.coap.Message.messageType;
 
 /**
  * CoAPRequest implements the CoAPRequest API
@@ -70,6 +71,7 @@ public class CoAPRequest implements CoAPConstants {
 	public String locationPath; // request's location path
 	public long timeout; // milliseconds (timeout==0 ==> no timeout)
 	public Integer contenttype; // contentType as integer (e.g. application/xml == 41)
+	public boolean confirmable;
 	
 	// status
 	public volatile boolean send; // true, if request has been sent
@@ -104,7 +106,11 @@ public class CoAPRequest implements CoAPConstants {
 	 * @param async true, if asynchronous request
 	 */
 	public synchronized void open(String method, String uri, boolean async) {
-		
+		open(method,uri,async,true);
+	}
+	
+
+	public synchronized void open(String method, String uri, boolean async, boolean confirmable) {
 		if (!isValidMethod(method))
 			throw new IllegalArgumentException("Invalid method "+method+". Only GET, POST, PUT and DELETE allowed");
 
@@ -119,6 +125,7 @@ public class CoAPRequest implements CoAPConstants {
 		this.method = method;
 		this.async = async;
 		this.send = false;
+		this.confirmable = confirmable;
 		setResponse(null);
 		
 		setReadyState(OPENED);
@@ -295,7 +302,17 @@ public class CoAPRequest implements CoAPConstants {
 		checkOpenUnsentState();
 		
 		int nr = CoAPConstantsConverter.convertHeaderToInt(header);
-		addOption(value, nr);
+		if (nr==OptionNumberRegistry.CONTENT_TYPE) {
+			// we also have to parse the value to get it as integer
+			int contentType = CoAPConstantsConverter.convertStringToContentType(value);
+			addOption(contentType,nr);
+		} else if (nr==OptionNumberRegistry.ACCEPT) {
+			// we also have to parse the value to get it as integer
+			int contentType = CoAPConstantsConverter.convertStringToContentType(value);
+			addOption(contentType,nr);
+		} else {
+			addOption(value, nr);
+		}
 	}
 	
 	/**
@@ -483,6 +500,7 @@ public class CoAPRequest implements CoAPConstants {
 			throw new IllegalArgumentException("Unknown CoAP method: "+method+". Only \"GET\", \"POST\", \"PUT\" and \"DELETE\" are allowed");
 		}
 		
+		request.setType(confirmable ? messageType.CON : messageType.NON);
 		request.setURI(uri);
 		request.setPayload(data);
 		

@@ -19,6 +19,7 @@ import xmlhttp.XMLHttpRequest;
 import ch.ethz.inf.vs.actinium.cfg.AppConfig;
 import ch.ethz.inf.vs.actinium.cfg.AppType;
 import ch.ethz.inf.vs.actinium.jscoap.CoAPConstants;
+import ch.ethz.inf.vs.actinium.jscoap.JavaScriptCoAPRequest;
 import ch.ethz.inf.vs.actinium.jscoap.JavaScriptResource;
 
 import ch.ethz.inf.vs.californium.coap.CodeRegistry;
@@ -155,6 +156,7 @@ public class JavaScriptApp extends AbstractApp implements CoAPConstants {
             try {
             	// Add AJAX' XMLHttpRequest to JavaScript
             	ScriptableObject.defineClass(scope,	XMLHttpRequest.class);
+            	ScriptableObject.defineClass(scope,	JavaScriptCoAPRequest.class);
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			} catch (InstantiationException e) {

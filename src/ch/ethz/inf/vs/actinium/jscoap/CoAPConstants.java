@@ -13,6 +13,7 @@ import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.ETag;
 import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.Forbidden;
 import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.Gateway_Timeout;
 import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.If_Match;
+import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.If_None_Match;
 import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.Internal_Server_Error;
 import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.Location_Path;
 import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.Location_Query;
@@ -33,7 +34,12 @@ import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.Uri_Path;
 import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.Uri_Port;
 import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.Uri_Query;
 import static ch.ethz.inf.vs.actinium.jscoap.CoAPConstants.Valid;
+
+import java.util.HashMap;
+
 import ch.ethz.inf.vs.californium.coap.CodeRegistry;
+import ch.ethz.inf.vs.californium.coap.MediaTypeRegistry;
+import ch.ethz.inf.vs.californium.coap.OptionNumberRegistry;
 
 /**
  * CoAPConstants implements the most important constants from CoAP.
@@ -42,7 +48,7 @@ import ch.ethz.inf.vs.californium.coap.CodeRegistry;
  */
 public interface CoAPConstants {
 
-	// Option Number Registry from draft-ietf-core-coap-07.htm (chapter 11.2)
+	// Option Number Registry from draft-ietf-core-coap-07.htm, chapter 5.10 (draft-ietf-core-coap-07.htm#section-5.10) and 11.2 (draft-ietf-core-coap-07.htm#section-11.2)
 	public static final String Content_Type 	= "Content-Type";
 	public static final String Max_Age 			= "Max-Age";
 	public static final String Proxy_Uri 		= "Proxy-Uri";
@@ -83,21 +89,113 @@ public interface CoAPConstants {
 
 class CoAPConstantsConverter {
 	
+	private static final HashMap<Double, Integer> numToCode = new HashMap<Double, Integer>();
+	private static final HashMap<String, Integer> strToCode = new HashMap<String, Integer>();
+	private static final HashMap<String, Integer> strToContentType = new HashMap<String, Integer>();
+	
+	static {
+		numToCode.put(2.01, Created);
+		numToCode.put(2.02, Deleted);
+		numToCode.put(2.03, Valid);
+		numToCode.put(2.04, Changed);
+		numToCode.put(2.05, Content);
+		numToCode.put(4.00, Bad_Request);
+		numToCode.put(4.01, Unauthorized);
+		numToCode.put(4.02, Bad_Option);
+		numToCode.put(4.03, Forbidden);
+		numToCode.put(4.04, Not_Found);
+		numToCode.put(4.05, Method_Not_Allowed);
+		numToCode.put(4.12, Precondition_Failed);
+		numToCode.put(4.13, Request_Entity_Too_Large);
+		numToCode.put(4.15, Unsupported_Media_Type);
+		numToCode.put(5.00, Internal_Server_Error);
+		numToCode.put(5.01, Not_Implemented);
+		numToCode.put(5.02, Bad_Gateway);
+		numToCode.put(5.03, Service_Unavailable);
+		numToCode.put(5.04, Gateway_Timeout);
+		numToCode.put(5.05, Proxying_Not_Supported);
+	}
+	
+	static {
+		strToCode.put("Created", Created);
+		strToCode.put("Deleted", Deleted);
+		strToCode.put("Valid", Valid);
+		strToCode.put("Changed", Changed);
+		strToCode.put("Content", Content);
+		strToCode.put("Bad Request", Bad_Request);
+		strToCode.put("Unauthorized", Unauthorized);
+		strToCode.put("Bad Option", Bad_Option);
+		strToCode.put("Forbidden", Forbidden);
+		strToCode.put("Not Found", Not_Found);
+		strToCode.put("Method Not Allowed", Method_Not_Allowed);
+		strToCode.put("Precondition Failed", Precondition_Failed);
+		strToCode.put("Request Entity Too Large", Request_Entity_Too_Large);
+		strToCode.put("Unsupported Media Type", Unsupported_Media_Type);
+		strToCode.put("Internal Server Error", Internal_Server_Error);
+		strToCode.put("Bad Gateway", Bad_Gateway);
+		strToCode.put("Service Unavailable", Service_Unavailable);
+		strToCode.put("Gateway Timeout", Gateway_Timeout);
+		strToCode.put("Proxying Not Supported", Proxying_Not_Supported);
+	}
+	
+	// compare to ch.ethz.inf.vs.californium.coap.MediaTypeRegistry
+	static {
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.UNDEFINED), MediaTypeRegistry.UNDEFINED);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.TEXT_PLAIN), MediaTypeRegistry.TEXT_PLAIN);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.TEXT_CSV), MediaTypeRegistry.TEXT_CSV);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.TEXT_HTML), MediaTypeRegistry.TEXT_HTML);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.IMAGE_GIF), MediaTypeRegistry.IMAGE_GIF);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.IMAGE_JPEG), MediaTypeRegistry.IMAGE_JPEG);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.IMAGE_PNG), MediaTypeRegistry.IMAGE_PNG);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.IMAGE_TIFF), MediaTypeRegistry.IMAGE_TIFF);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_LINK_FORMAT), MediaTypeRegistry.APPLICATION_LINK_FORMAT);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_XML), MediaTypeRegistry.APPLICATION_XML);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM), MediaTypeRegistry.APPLICATION_OCTET_STREAM);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_RDF_XML), MediaTypeRegistry.APPLICATION_RDF_XML);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_SOAP_XML), MediaTypeRegistry.APPLICATION_SOAP_XML);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_ATOM_XML), MediaTypeRegistry.APPLICATION_ATOM_XML);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_XMPP_XML), MediaTypeRegistry.APPLICATION_XMPP_XML);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_EXI), MediaTypeRegistry.APPLICATION_EXI);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_FASTINFOSET), MediaTypeRegistry.APPLICATION_FASTINFOSET);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_SOAP_FASTINFOSET), MediaTypeRegistry.APPLICATION_SOAP_FASTINFOSET);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_JSON), MediaTypeRegistry.APPLICATION_JSON);
+		strToContentType.put(MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_X_OBIX_BINARY), MediaTypeRegistry.APPLICATION_X_OBIX_BINARY);
+	}
+	
+	public static int convertNumCodeToCode(double num) {
+		Integer ret = numToCode.get(num);
+		if (ret!=null) return ret;
+		else return Internal_Server_Error; // better throw an exception?
+	}
+	
+	public static int convertStringToCode(String str) {
+		Integer ret = strToCode.get(str);
+		if (ret!=null) return ret;
+		else return Internal_Server_Error; // better throw an exception?
+	}
+	
+	public static int convertStringToContentType(String str) {
+		Integer ret = strToContentType.get(str);
+		if (ret!=null) return ret;
+		else return MediaTypeRegistry.UNDEFINED; // better throw an exception?
+	}
+	
 	public static int convertHeaderToInt(String c) {
-		if (Content_Type.equals(c)) 	return 1;
-		else if (Max_Age.equals(c)) 	return 2;
-		else if (Proxy_Uri.equals(c)) 	return 3;
-		else if (ETag.equals(c)) 		return 4;
-		else if (Uri_Host.equals(c))	return 5;
-		else if (Location_Path.equals(c))return 6;
-		else if (Uri_Port.equals(c))	return 7;
-		else if (Location_Query.equals(c))return 8;
-		else if (Uri_Path.equals(c))	return 9;
-		else if (Token.equals(c))		return 11;
-		else if (Accept.equals(c))		return 12;
-		else if (If_Match.equals(c))	return 13;
-		else if (Uri_Query.equals(c))	return 15;
-		else return 21;
+		if (Content_Type.equals(c)) 	return OptionNumberRegistry.CONTENT_TYPE;
+		else if (Max_Age.equals(c)) 	return OptionNumberRegistry.MAX_AGE;
+		else if (Proxy_Uri.equals(c)) 	return OptionNumberRegistry.PROXY_URI;
+		else if (ETag.equals(c)) 		return OptionNumberRegistry.ETAG;
+		else if (Uri_Host.equals(c))	return OptionNumberRegistry.URI_HOST;
+		else if (Location_Path.equals(c))return OptionNumberRegistry.LOCATION_PATH;
+		else if (Uri_Port.equals(c))	return OptionNumberRegistry.URI_PORT;
+		else if (Location_Query.equals(c))return OptionNumberRegistry.LOCATION_QUERY;
+		else if (Uri_Path.equals(c))	return OptionNumberRegistry.URI_PATH;
+		else if (Token.equals(c))		return OptionNumberRegistry.TOKEN;
+		else if (Accept.equals(c))		return OptionNumberRegistry.ACCEPT;
+		else if (If_Match.equals(c))	return OptionNumberRegistry.IF_MATCH;
+		else if (Uri_Query.equals(c))	return OptionNumberRegistry.URI_QUERY;
+		else if (If_None_Match.equals(c)) return OptionNumberRegistry.IF_NONE_MATCH;
+		else throw new IllegalArgumentException("Unknown Header: "+c);
 	}
 	
 	public static String convertIntToHeader(int nr) {

@@ -59,7 +59,7 @@ app.root.onget = function(request) {
 }
 
 app.root.onpost = function(request) {
-	var name = request.getPayloadString();
+	var name = request.payloadText;
 	if (!isInUse(name)) {
 		var timer = new Timer(1000,name);
 		var path = timer.timerres.getPath();

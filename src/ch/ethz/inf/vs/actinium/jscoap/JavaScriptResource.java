@@ -2,14 +2,13 @@ package ch.ethz.inf.vs.actinium.jscoap;
 
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
-import org.mozilla.javascript.NativeFunction;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 
 import ch.ethz.inf.vs.californium.coap.DELETERequest;
 import ch.ethz.inf.vs.californium.coap.GETRequest;
 import ch.ethz.inf.vs.californium.coap.POSTRequest;
 import ch.ethz.inf.vs.californium.coap.PUTRequest;
-import ch.ethz.inf.vs.californium.coap.Request;
 import ch.ethz.inf.vs.californium.endpoint.LocalResource;
 
 /**
@@ -68,7 +67,7 @@ public class JavaScriptResource extends LocalResource implements CoAPConstants {
 	public void performGET(GETRequest request) {
 		Function onget = getOnget();
 		if (onget!=null) {
-			performFunction(onget, request);
+			performFunction(onget, new JavaScriptCoAPRequest(request));
 		} else {
 			super.performGET(request);
 		}
@@ -78,7 +77,7 @@ public class JavaScriptResource extends LocalResource implements CoAPConstants {
 	public void performPOST(POSTRequest request) {
 		Function onpost = getOnpost();
 		if (onpost!=null) {
-			performFunction(onpost, request);
+			performFunction(onpost, new JavaScriptCoAPRequest(request));
 		} else {
 			super.performPOST(request);
 		}
@@ -88,7 +87,7 @@ public class JavaScriptResource extends LocalResource implements CoAPConstants {
 	public void performPUT(PUTRequest request) {
 		Function onput = getOnput();
 		if (onput!=null) {
-			performFunction(onput, request);
+			performFunction(onput, new JavaScriptCoAPRequest(request));
 		} else {
 			super.performPUT(request);
 		}
@@ -98,19 +97,21 @@ public class JavaScriptResource extends LocalResource implements CoAPConstants {
 	public void performDELETE(DELETERequest request) {
 		Function ondelete = getOndelete();
 		if (ondelete!=null) {
-			performFunction(ondelete, request);
+			performFunction(ondelete, new JavaScriptCoAPRequest(request));
 		} else {
 			super.performDELETE(request);
 		}
 	}
 	
-	private void performFunction(Object object, Request request) {
-		NativeFunction fun = (NativeFunction) object;
+	private void performFunction(Function fun, JavaScriptCoAPRequest request) {
+//		NativeFunction fun = (NativeFunction) object;
 		try {
 			Context cx = Context.enter();
+			Scriptable prototype = ScriptableObject.getClassPrototype(fun, request.getClassName());
+			request.setPrototype(prototype);
 			Scriptable scope = fun.getParentScope();
 			Object thisObj = getThis();
-			fun.call(cx, scope, Context.toObject(thisObj, scope), new Object[] {request});
+			fun.call(cx, fun, Context.toObject(thisObj, scope), new Object[] {request});
 		} finally {
 			Context.exit();
 		}
