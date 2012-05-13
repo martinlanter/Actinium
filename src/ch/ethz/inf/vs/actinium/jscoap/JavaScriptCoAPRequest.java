@@ -51,6 +51,10 @@ public class JavaScriptCoAPRequest extends ScriptableObject implements CoAPConst
 	
 	// Functions for JavaScript //
 
+	public String jsFunction_getPayloadString() {
+		return request.getPayloadString();
+	}
+	
 	public void jsFunction_accept() {
 		request.accept();
 	}

@@ -85,6 +85,12 @@ public abstract class AbstractApp extends LocalResource implements PlugAndPlayab
 	public String getName() {
 		return appcfg.getName();
 	}
+	
+	// Make changed public (e.g. for JS)
+	@Override
+	public void changed() {
+		super.changed();
+	}
 
 	/**
 	 * Checks for the property "running" and starts, stops or restarts the app

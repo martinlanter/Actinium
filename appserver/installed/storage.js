@@ -15,11 +15,9 @@ app.root.onpost = function(request) {
 	var name = request.getPayloadString();
 	
 	if (contains(subress,name)) {
-		var response = new Response(CodeRegistry.RESP_BAD_REQUEST)
 		var path = findPathForName(subress, paths, name);
-		response.setPayload("Storage "+name+" is already created at "+path);
-		response.setLocationPath(path);
-		request.respond(response);
+		request.setLocationPath(path);
+		request.respond(4.00, "Storage "+name+" is already created at "+path);
 	} else {
 		var storage = new Storage(name);
 		app.root.add(storage.res);
@@ -27,10 +25,8 @@ app.root.onpost = function(request) {
 		subress[subress.length] = name;
 		paths[paths.length] = path;
 		
-		var response = new Response(CodeRegistry.RESP_CREATED);
-		response.setPayload("Storage "+name+" created at location "+path);
-		response.setLocationPath(path);
-		request.respond(response);
+		request.setLocationPath(path);
+		request.respond(CodeRegistry.RESP_CREATED, "Storage "+name+" created at location "+path);
 	}
 }
 
@@ -41,9 +37,7 @@ app.root.onput = function(request) {
 }
 
 app.root.onget = function(request) {
-	var response = new Response(CodeRegistry.RESP_CONTENT);
-	response.setPayload(content);
-	request.respond(response);
+	request.respond(2.05, content);
 }
 
 app.root.ondelete = function(request) {
@@ -58,19 +52,15 @@ function Storage(name) {
 	var mythis = this;
 	
 	this.res.onget = function(request) {
-		var response = new Response(CodeRegistry.RESP_CONTENT);
-		response.setPayload(mythis.content);
-		request.respond(response);
+		request.respond(CodeRegistry.RESP_CONTENT, mythis.content);
 	}
 	
 	this.res.onpost = function(request) {
 		var name = request.getPayloadString();
 
 		if (contains(mythis.subress, name)) {
-			var response = new Response(CodeRegistry.RESP_BAD_REQUEST)
-			request.setPayload("Storage "+name+" is already created");
-			response.setLocationPath(findPathForName(mythis.subress, mythis.paths, name));
-			request.respond(response);
+			request.setLocationPath(findPathForName(mythis.subress, mythis.paths, name));
+			request.respond(CodeRegistry.RESP_BAD_REQUEST, "Storage "+name+" is already created");
 		} else {
 			var storage = new Storage(name);
 			mythis.res.add(storage.res);
@@ -78,11 +68,8 @@ function Storage(name) {
 			mythis.subress[mythis.subress.length] = name;
 			mythis.paths[mythis.paths.length] = path;
 
-
-			var response = new Response(CodeRegistry.RESP_CREATED);
-			response.setPayload("Storage "+name+" created at location "+path);
-			response.setLocationPath(path);
-			request.respond(response);
+			request.setLocationPath(path);
+			request.respond(CodeRegistry.RESP_CREATED, "Storage "+name+" created at location "+path);
 		}
 	}
 	

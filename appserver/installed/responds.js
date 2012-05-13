@@ -10,6 +10,13 @@
  *   "500"      = no accept, response after 500 ms
  */
 
+if (typeof String.prototype.startsWith != 'function') {
+  String.prototype.startsWith = function (str){
+    return this.indexOf(str) == 0;
+  };
+}
+
+
 var counter = 0;
 
 app.root.onpost = respond;
@@ -25,7 +32,7 @@ function respond(request) {
 	var timestr;
 	
 	if (payload.startsWith("accept")) {
-		app.dump("accept request "+request.getID());
+		app.dump("accept request "+request.getMID());
 		request.accept();
 		
 		timestr = payload.substring(6);
@@ -33,21 +40,21 @@ function respond(request) {
 		timestr = payload;
 	}
 	
-	if (!timestr.isEmpty()) {
+	if (timestr !== "") {
 		var time = getTime(timestr);
 		
 		if (time<0) {
-			app.dump("Invalid time in request "+request.getID());
+			app.dump("Invalid time in request "+request.getMID());
 			request.respond(CodeRegistry.RESP_CONTENT, "Invalid time "+timestr+" at ("+counter+")");
 		} else {
-			app.dump("Wait for "+time+" ms to respond to reqeust "+request.getID());
+			app.dump("Wait for "+time+" ms to respond to reqeust "+request.getMID());
 			app.sleep(time);
-			app.dump("Respond ("+counter+") to reqeust "+request.getID());
+			app.dump("Respond ("+counter+") to reqeust "+request.getMID());
 			//app.dump("This request's type is "+request.getType());
 			request.respond(CodeRegistry.RESP_CONTENT, "Response ("+counter+") after "+time+" ms");
 		}
 	} else {
-		app.dump("No response ("+counter+") to request"+request.getID());
+		app.dump("No response ("+counter+") to request"+request.getMID());
 	}
 	
 	counter++;
